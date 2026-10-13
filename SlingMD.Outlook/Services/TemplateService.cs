@@ -291,6 +291,11 @@ namespace SlingMD.Outlook.Services
                     }
                     frontMatter.AppendLine($"{item.Key}: \"{EscapeYamlDoubleQuotedScalar(_dateFormatter.Format(dateTimeValue, format))}\"");
                 }
+                else if (item.Value is bool boolValue)
+                {
+                    // bool.ToString() yields "True"; Obsidian's checkbox property expects lowercase.
+                    frontMatter.AppendLine($"{item.Key}: {(boolValue ? "true" : "false")}");
+                }
                 else if (stringEnumerable != null && !(item.Value is string))
                 {
                     WriteYamlList(frontMatter, item.Key, stringEnumerable);
@@ -859,6 +864,10 @@ for (const email of emails) {
                         format = "yyyy-MM-dd HH:mm:ss";
                     }
                     replacements[item.Key] = _dateFormatter.Format(dateTimeValue, format);
+                }
+                else if (item.Value is bool boolValue)
+                {
+                    replacements[item.Key] = boolValue ? "true" : "false";
                 }
                 else
                 {

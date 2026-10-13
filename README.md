@@ -114,6 +114,7 @@ Before using SlingMD, you'll need to configure your Obsidian vault settings:
    - **Ask for dates**: Toggle whether to prompt for dates each time (shows the Task Options form)
    - **Group Email Threads**: Toggle whether to automatically organize related emails into thread folders
    - **Subject Cleanup Patterns**: Configure patterns for cleaning up email subjects (e.g., removing "Re:", "[EXTERNAL]", etc.)
+   - **Body Cleanup Patterns**: Regex patterns removed from the email body before it is saved (e.g., external-sender banners, confidentiality footers). `^` and `$` match per line; prefix a pattern with `(?s)` to span lines. Empty by default. Any note whose body a pattern altered gets `bodyCleaned: true` in its frontmatter
    - **Contacts Folder**: Where new contact notes will be stored (default: "Contacts")
    - **Enable Contact Saving**: Toggle automatic creation of contact notes
    - **Search Entire Vault For Contacts**: When enabled, SlingMD will look outside the contacts folder before creating a new contact note

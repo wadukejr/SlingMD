@@ -55,6 +55,7 @@ namespace SlingMD.Outlook.Services
         private readonly ContactNameParser _contactNameParser;
         private readonly ContactLinkFormatter _contactLinkFormatter;
         private readonly SubjectFilenameCleaner _subjectFilenameCleaner;
+        private readonly BodyCleanerService _bodyCleaner;
         private readonly NoteTitleBuilder _noteTitleBuilder;
         private readonly UniqueFilenameResolver _uniqueFilenameResolver = new UniqueFilenameResolver();
         private readonly IClock _clock;
@@ -114,6 +115,7 @@ namespace SlingMD.Outlook.Services
             _contactNameParser = new ContactNameParser();
             _contactLinkFormatter = new ContactLinkFormatter();
             _subjectFilenameCleaner = new SubjectFilenameCleaner(settings, _fileService);
+            _bodyCleaner = new BodyCleanerService(settings ?? new ObsidianSettings());
             _noteTitleBuilder = new NoteTitleBuilder();
         }
 
@@ -321,12 +323,16 @@ namespace SlingMD.Outlook.Services
                         metadata["threadNote"] = threadNoteLink;
                     }
 
+                    // Convert and clean once; the note may be re-rendered below after a rename.
+                    string noteBody = CleanNoteBody(HtmlToMarkdownConverter.Convert(mail.HTMLBody, mail.Body), metadata);
+
                     string renderedContent = BuildEmailNoteContent(
                         mail,
                         metadata,
                         noteTitle,
                         subjectClean,
                         senderClean,
+                        noteBody,
                         fileNameNoExt,
                         conversationId,
                         threadNoteLink);
@@ -439,6 +445,7 @@ namespace SlingMD.Outlook.Services
                                     noteTitle,
                                     subjectClean,
                                     senderClean,
+                                    noteBody,
                                     fileNameNoExt,
                                     conversationId,
                                     threadNoteLink);
@@ -523,6 +530,7 @@ namespace SlingMD.Outlook.Services
                                 noteTitle,
                                 subjectClean,
                                 senderClean,
+                                noteBody,
                                 fileNameNoExt,
                                 conversationId,
                                 threadNoteLink);
@@ -845,9 +853,25 @@ namespace SlingMD.Outlook.Services
         }
 
         /// <summary>
+        /// Applies <see cref="ObsidianSettings.BodyCleanupPatterns"/> to the Markdown body and, when a
+        /// pattern removed text, records <c>bodyCleaned: true</c> in <paramref name="metadata"/> so the
+        /// note is never mistaken for a verbatim copy of the email.
+        /// </summary>
+        internal string CleanNoteBody(string body, Dictionary<string, object> metadata)
+        {
+            string cleaned = _bodyCleaner.Clean(body, out bool removedContent);
+            if (removedContent && metadata != null)
+            {
+                metadata["bodyCleaned"] = true;
+            }
+
+            return cleaned;
+        }
+
+        /// <summary>
         /// Returns thread-related info for an email, including paths and names.
         /// </summary>
-        private string BuildEmailNoteContent(MailItem mail, Dictionary<string, object> metadata, string noteTitle, string subjectClean, string senderClean, string fileNameNoExt, string conversationId, string threadNoteLink)
+        private string BuildEmailNoteContent(MailItem mail, Dictionary<string, object> metadata, string noteTitle, string subjectClean, string senderClean, string noteBody, string fileNameNoExt, string conversationId, string threadNoteLink)
         {
             string taskBlock = string.Empty;
             if (_settings.CreateObsidianTask && _taskService.ShouldCreateTasks)
@@ -870,7 +894,7 @@ namespace SlingMD.Outlook.Services
                 SenderEmail = _contactService.GetSenderEmail(mail),
                 Date = mail.ReceivedTime.ToString("yyyy-MM-dd"),
                 Timestamp = _dateFormatter.FormatOrDefault(mail.ReceivedTime, _settings.EmailDateFormat, _dateFormatter.Format(mail.ReceivedTime, "yyyy-MM-dd HH:mm:ss")),
-                Body = HtmlToMarkdownConverter.Convert(mail.HTMLBody, mail.Body),
+                Body = noteBody,
                 TaskBlock = taskBlock,
                 FileName = fileNameNoExt + ".md",
                 FileNameWithoutExtension = fileNameNoExt,
