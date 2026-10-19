@@ -732,10 +732,11 @@ namespace SlingMD.Outlook
                 return;
             }
 
-            object item = items.GetFirst();
-            while (item != null)
+            // SimpleItems has no GetFirst/GetNext (those belong to Items); walk it by its 1-based index.
+            int count = items.Count;
+            for (int i = 1; i <= count; i++)
             {
-                object current = item;
+                object current = items[i];
                 try
                 {
                     MailItem mail = current as MailItem;
@@ -754,8 +755,6 @@ namespace SlingMD.Outlook
                     {
                         if (children != null) System.Runtime.InteropServices.Marshal.ReleaseComObject(children);
                     }
-
-                    item = items.GetNext();
                 }
                 finally
                 {
