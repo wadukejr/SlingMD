@@ -298,7 +298,7 @@ Every template type supports `{{frontmatter}}` (generates the YAML frontmatter b
 All 12 contact placeholders are available regardless of how the contact was created. When a contact comes from email (name only), the detail fields (`{{phone}}`, `{{email}}`, etc.) render as empty strings. When a contact is slung from Outlook, all available fields are populated.
 
 **Appointment Templates:**
-`{{subject}}`, `{{organizer}}`, `{{start}}`, `{{end}}`, `{{location}}`, `{{body}}`, `{{requiredAttendees}}`, `{{optionalAttendees}}`, `{{resourceAttendees}}`, `{{categories}}`, `{{recurrenceInfo}}`, `{{fileName}}`, `{{fileNameNoExt}}`
+`{{subject}}`, `{{organizer}}`, `{{start}}`, `{{end}}`, `{{location}}`, `{{body}}`, `{{requiredAttendees}}`, `{{optionalAttendees}}`, `{{resourceAttendees}}`, `{{categories}}`, `{{recurrenceInfo}}`, `{{calendar}}`, `{{fileName}}`, `{{fileNameNoExt}}`
 
 **Task Templates:**
 `{{taskText}}`, `{{dueDate}}`, `{{scheduledDate}}`, `{{tags}}`
