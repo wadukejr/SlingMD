@@ -23,6 +23,7 @@ SlingMD is a powerful Outlook add-in that bridges the gap between your Outlook e
 - Thread summary pages with timeline views
 - **Companion meeting notes** — optional blank note for real-time meeting capture, linked to the appointment note
 - **Bulk "Save Today's Appointments"** — one-click export of all today's calendar items
+- **Save Date Range with a calendar picker** — choose which calendars to export (every account's calendar, sub-calendars, shared mailboxes, and calendars shared with you in the Calendar pane); the choice is remembered and also used by Save Today
 - Automatic contact note creation with communication-history Dataview tables
 - Customisable note title formatting (placeholders for {Subject}, {Sender}, {Date}) with max-length trimming
 - Advanced subject clean-up engine using user-defined regex patterns
@@ -297,7 +298,7 @@ Every template type supports `{{frontmatter}}` (generates the YAML frontmatter b
 All 12 contact placeholders are available regardless of how the contact was created. When a contact comes from email (name only), the detail fields (`{{phone}}`, `{{email}}`, etc.) render as empty strings. When a contact is slung from Outlook, all available fields are populated.
 
 **Appointment Templates:**
-`{{subject}}`, `{{organizer}}`, `{{start}}`, `{{end}}`, `{{location}}`, `{{body}}`, `{{requiredAttendees}}`, `{{optionalAttendees}}`, `{{resourceAttendees}}`, `{{categories}}`, `{{recurrenceInfo}}`, `{{fileName}}`, `{{fileNameNoExt}}`
+`{{subject}}`, `{{organizer}}`, `{{start}}`, `{{end}}`, `{{location}}`, `{{body}}`, `{{requiredAttendees}}`, `{{optionalAttendees}}`, `{{resourceAttendees}}`, `{{categories}}`, `{{recurrenceInfo}}`, `{{calendar}}`, `{{fileName}}`, `{{fileNameNoExt}}`
 
 **Task Templates:**
 `{{taskText}}`, `{{dueDate}}`, `{{scheduledDate}}`, `{{tags}}`
